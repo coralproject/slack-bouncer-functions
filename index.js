@@ -29,8 +29,9 @@ config.loadFile('./config/' + env + '.json');
 config.validate({ allowed: 'strict' });
 
 // Build up the comment schema.
-const schema = Joi.object().keys({
+const DataSchema = Joi.object().keys({
   id: Joi.string().required(),
+  source: Joi.string().default('comment'),
 });
 
 // Extract the signing secret now.
@@ -44,7 +45,7 @@ const publisher = topic.publisher();
 // Create the cloud functions endpoint.
 exports.slackTalkInjestComment = (req, res) => {
   // Validate the comment input.
-  const { value: comment, error: err } = Joi.validate(req.body, schema, {
+  const { value: data, error: err } = Joi.validate(req.body, DataSchema, {
     stripUnknown: true,
     convert: false,
     presence: 'required',
@@ -87,7 +88,7 @@ exports.slackTalkInjestComment = (req, res) => {
   const payload = {
     install_id: installID,
     handshake_token: handshakeToken,
-    comment,
+    data,
   };
 
   // Create a new buffer from the payload data.
