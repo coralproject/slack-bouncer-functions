@@ -29,10 +29,12 @@ config.loadFile('./config/' + env + '.json');
 config.validate({ allowed: 'strict' });
 
 // Build up the comment schema.
-const DataSchema = Joi.object().keys({
-  id: Joi.string().required(),
-  source: Joi.string().default('comment'),
-});
+const DataSchema = Joi.object()
+  .keys({
+    id: Joi.string().required(),
+    source: Joi.string().default('comment'),
+  })
+  .optionalKeys('source');
 
 // Extract the signing secret now.
 const secret = config.get('token_secret');
